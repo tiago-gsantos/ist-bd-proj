@@ -140,13 +140,14 @@ lista_medicamentos = ["Paracetamol","Ibuprofeno","Amoxicilina","Azitromicina","m
                       "Clonazepam","Diazepam","Hidroclorotiazida","Levotiroxina","Atenolol","Metoprolol",
                       "Prednisona","Furosemida","Amlodipino"]
 
+
 with open('./data/receita.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
   writer.writerow(['código_sns', 'medicamento', 'quantidade'])
   for sns_consulta in lista_sns_consulta_com_receita:
     medicamentos = random.sample(lista_medicamentos, random.randint(1,6))
     for medicamento in medicamentos:
-      writer.writerow([sns_consulta, medicamento, random.randomint(1,3)])
+      writer.writerow([sns_consulta, medicamento, random.randint(1,3)])
   
 
 
