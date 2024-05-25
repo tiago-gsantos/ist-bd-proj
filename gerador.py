@@ -124,3 +124,29 @@ with open('./data/consulta.csv', mode='w', newline='', encoding='utf-8') as file
         writer.writerow([i*120+j*2+k, lista_ssn_pacientes[(i*120+j*2+k)%5000], lista_nif_medicos[j], nomes_clinicas[idx], days[i], horas_consultas[k], lista_sns_consulta[i*120+j*2+k]])
 
 
+quantidades = [1,2,3,4,5,6]
+
+def selecionar_com_probabilidade(lista, probabilidade=0.8):
+    resultado = []
+    for valor in lista:
+        if random.random() < probabilidade:
+            resultado.append(valor)
+    return resultado
+
+
+lista_sns_consulta_com_receita = selecionar_com_probabilidade(lista_sns_consulta)
+lista_medicamentos = ["Paracetamol","Ibuprofeno","Amoxicilina","Azitromicina","metformina",
+                      "Omeprazol","Losartana","Simvastatina","CetirizinaLoratadina","Dipirona",
+                      "Clonazepam","Diazepam","Hidroclorotiazida","Levotiroxina","Atenolol","Metoprolol",
+                      "Prednisona","Furosemida","Amlodipino"]
+
+with open('./data/receita.csv', mode='w', newline='', encoding='utf-8') as file:
+  writer = csv.writer(file)
+  writer.writerow(['código_sns', 'medicamento', 'quantidade'])
+  for sns_consulta in lista_sns_consulta_com_receita:
+    medicamentos = random.sample(lista_medicamentos, random.randint(1,6))
+    for medicamento in medicamentos:
+      writer.writerow([sns_consulta, medicamento, random.randomint(1,3)])
+  
+
+
