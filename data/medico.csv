@@ -1,61 +1,60 @@
-nif,nome,telefone,morada,especialidade
-86582996511,Mário Melo-Lopes,918041033,Travessa Diogo Baptista 87 2859-473 Santana,clínica geral
-85088128363,Bruno Neto,997455036,Avenida de Fernandes 8 1539-442 Lourosa,clínica geral
-65494348928,Larissa Brito,986110814,Av Diego Sá 705 1503-033 Sabugal,clínica geral
-33698997523,Lucas Cruz,904903886,R. Matos 67 2614-490 Torres Vedras,clínica geral
-79200040278,Gil do Mota,907801916,Praça Cruz 39 8881-393 Marinha Grande,clínica geral
-73418102214,Carolina Melo,937215503,R. de Garcia 9 4187-077 Tarouca,clínica geral
-97048049086,Daniel Ramos,964766117,Alameda Tavares 27 8448-899 Penafiel,clínica geral
-94840548667,Erica de Abreu,959593174,Alameda Lara Pacheco 598 6756-426 Cantanhede,clínica geral
-12555439069,Lisandro Martins,909134507,Av Leal 195 0550-514 Moura,clínica geral
-46632396234,Rúben Nunes,951460115,Rua Isabela Costa 46 1750-248 Sabugal,clínica geral
-71451452152,Melissa da Borges,948393523,Rua Anjos S/N 6499-992 Vila Nova de Foz Côa,clínica geral
-54325708441,Gustavo Rodrigues,928513406,Travessa de Matos 96 5752-133 Matosinhos,clínica geral
-23771228475,Frederico de Vieira,946466980,Travessa Melo 32 5923-319 Mêda,clínica geral
-69722220934,Renato Pereira,906831090,Travessa Carminho Amaral 75 7052-552 Caniço,clínica geral
-13104899350,William de Lopes,920175175,R. Ramos S/N 3858-612 Maia,clínica geral
-53001021074,Melissa Macedo,978024465,Avenida Ângela Pinho 25 2314-522 Loures,clínica geral
-18549156332,Lia Branco,988970409,Av Garcia S/N 1379-281 Amora,clínica geral
-82815177657,Álvaro Amorim,977173892,Avenida de Ramos 59 8762-711 Vila Nova de Foz Côa,clínica geral
-84088600265,Carlota Barros,909091480,Praça Goelas de Pau 19 5064-981 Valongo,clínica geral
-55094943635,Emanuel Carvalho,904933262,Rua de Amorim 325 9101-251 Moura,clínica geral
-05425615779,Rui Batista,998109631,Rua de Nogueira S/N 0450-492 Alcobaça,ortopedia
-32916113727,Nuno Jesus,986556055,Rua de Matos 55 7898-778 Fátima,cardiologia
-41395421436,Eduardo Maia,933659031,Praça de Grijó 742 6851-524 Vizela,dermatologia
-84431160461,Emma Pinheiro,931715558,R. de São Lourenço 14 2838-233 Tomar,cirugia cardio-toráxica
-01475337661,Enzo do Amorim,967457403,Praça Vítor Carneiro 27 7649-653 Vila Real,otorrinolaringologia
-81210485916,Núria de Cunha,938116801,Travessa Visconde de Alvalade S/N 5801-759 Horta,ortopedia
-66805598098,Emma Lopes,982844021,R. do Passeio Alegre 31 1247-107 Sacavém,cardiologia
-83403169923,Mia Domingues-Antunes,927354137,Praça de Cruz 88 6944-750 Trancoso,dermatologia
-36052604562,Xavier Rocha,983848729,Avenida de Machado 50 9995-528 Ponta Delgada,cirugia cardio-toráxica
-44047041115,Brian Faria,975526606,Av de Gomes S/N 1114-706 Alverca do Ribatejo,otorrinolaringologia
-95019558785,Gaspar Coelho,966970697,Rua de Santo Eugénio 3 9182-122 Gandra,ortopedia
-04905289707,Íris Sá,917813863,Praça de Cunha 87 6191-357 Guimarães,cardiologia
-83202200712,Valentina Baptista,974012767,Av de Monchique 6 9093-361 Ermesinde,dermatologia
-49835786846,Rodrigo Pinto,913365071,Av Luna Morais S/N 5548-956 Elvas,cirugia cardio-toráxica
-64892702956,Pedro de Figueiredo,946996457,Av dos Armazéns 55 6980-495 Espinho,otorrinolaringologia
-50734419150,Nicole Nascimento,952774947,Rua Sousa 50 7738-001 Agualva-Cacém,ortopedia
-37622603733,Joel Costa,946171867,Praça Matias 911 6869-140 Queluz,cardiologia
-09521600656,Márcio Valente,973335092,Travessa dos Heróis do Mar 89 6863-660 Seia,dermatologia
-70784294579,Enzo Mendes,993539208,Largo Correia 50 9832-257 Queluz,cirugia cardio-toráxica
-80858631048,Miguel Moreira,905527999,Travessa de Moreira 37 0788-027 Esposende,otorrinolaringologia
-44631246364,Bernardo Valente,980290978,Av de Matias 926 9093-259 Loures,ortopedia
-84531036726,Naiara Reis,910798784,Praça Marques 65 9561-573 Vila Franca de Xira,cardiologia
-43166277547,Fernando Pires-Silva,987970160,Av Coronel Vítor Alves 853 6197-301 Almeirim,dermatologia
-44710171750,Ana Paiva,980799199,Largo Leal 614 8092-899 Rio Maior,cirugia cardio-toráxica
-10405953988,Bárbara Valente,994982446,Praça dos Bacalhoeiros 9 7063-340 Esposende,otorrinolaringologia
-17490245863,Daniela Magalhães,968736519,Rua do Seabra S/N 2002-672 Ílhavo,ortopedia
-40824613330,Helena de Amaral,967570942,Avenida Cruz 160 3728-929 Ovar,cardiologia
-00350779095,Isabela-Júlia Guerreiro,903437963,R. Sousa 774 7419-023 Ponte de Sor,dermatologia
-74268349890,Mafalda Nascimento,956476728,R. José António Marques S/N 5411-250 Agualva-Cacém,cirugia cardio-toráxica
-89542612582,Emma do Amorim,960415038,R. Azevedo 51 6592-027 Horta,otorrinolaringologia
-61457896020,Filipa Oliveira,910567381,Avenida Batista 39 4123-227 Vila Real,ortopedia
-93993043966,Lourenço Castro,950895918,R. de Magalhães 7 9456-180 Cartaxo,cardiologia
-18808837790,Cláudio Loureiro,918582287,Travessa Cunha 694 5560-656 Ponta Delgada,dermatologia
-85774542511,Micael Oliveira,929937277,Rua Nunes 93 8142-577 Moura,cirugia cardio-toráxica
-56110404368,Filipa Monteiro,904669363,Rua do Monte Cativo 67 8478-815 Rebordosa,otorrinolaringologia
-90245019386,Petra Ferreira,951956589,Largo Leal 5 3658-368 Coimbra,ortopedia
-86050130994,Cláudio Ribeiro,934107149,Alameda Constança Castro 23 7751-050 Chaves,cardiologia
-65404435150,Lara-Miriam Maia,987683282,Largo Sandro Cruz 59 9902-331 Costa da Caparica,dermatologia
-15444394625,Francisca Moreira,962128433,Largo Lorena Silva 23 0712-497 Olhão,cirugia cardio-toráxica
-36303824625,Carlos Sousa,952773248,R. Leal 50 5245-031 Vizela,otorrinolaringologia
+396939652,Rita Monteiro,925641554,Largo da Praia da Galé 94 5047-002 Barreiro,clínica geral
+555254892,Gabriel Nascimento,932868494,R. de Fernandes S/N 3560-785 Felgueiras,clínica geral
+765040779,Lourenço Lopes,976264437,Largo Henriques 675 3096-672 Alcácer do Sal,clínica geral
+313287975,Leandro Alves,923803841,Avenida Mendes 63 7060-266 Marinha Grande,clínica geral
+580335226,Noah Rocha,938912023,Rua de Torres 993 8061-221 São Mamede de Infesta,clínica geral
+906841892,Vítor Carneiro,915308134,Av de Matos 828 3965-938 Ribeira Grande,clínica geral
+711098875,Mauro Carneiro-Batista,902342514,Rua de Vicente 541 3473-400 Esposende,clínica geral
+352246914,Bárbara Morais,920583209,Travessa Pacheco 87 1475-539 Amora,clínica geral
+365486208,Leonardo de Pinho,996174543,Alameda Santos 546 7569-581 Marinha Grande,clínica geral
+330306924,Júlia Guerreiro,967363719,Av dos Escaleres S/N 7893-286 Oliveira de Azeméis,clínica geral
+357836799,Tiago Sá,986982977,Praça Gaspar 67 9789-273 Seixal,clínica geral
+763622689,Gabriela Branco,995846258,Av do Carvalhido 27 9335-463 Fundão,clínica geral
+909027001,Gaspar Leal,999786220,Alameda Vicente Correia S/N 5157-100 Abrantes,clínica geral
+143167499,Valentina Vaz,904020913,Largo Manuel Nascimento 54 8281-041 Braga,clínica geral
+851844682,Nicole Leite,957539971,Largo de Palma S/N 1555-512 São João da Madeira,clínica geral
+595880632,Pilar Barros,945773374,Rua Anjos 3 2058-718 Estremoz,clínica geral
+017341624,Sebastião Guerreiro-Machado,939069914,Av de Araújo S/N 7086-508 Espinho,clínica geral
+327901732,Sebastião Gonçalves-Monteiro,904718213,Av Petra Alves S/N 3895-896 Estremoz,clínica geral
+617441570,Vasco Amaral,926552655,Praça do Regado 29 7892-160 Lamego,clínica geral
+701298660,Vasco Amorim,919600725,Praça de Borges 39 6167-602 Rio Maior,clínica geral
+102948387,Eva Barros,976010747,Largo de Augusto Gomes 853 2568-647 Ílhavo,ortopedia
+085713923,Daniela Henriques,967207604,Av do Barredo 79 5527-383 Almeirim,cardiologia
+881495369,Alice Neves,988319737,Avenida Igor Almeida 75 6619-839 Chaves,dermatologia
+422907732,Luna Morais-Mendes,929948700,Praça Sabugosa 204 2490-873 Cantanhede,cirugia cardio-toráxica
+141225123,Noah Neto,916314216,Largo Kyara Macedo 66 9955-373 Maia,otorrinolaringologia
+051272443,Madalena Cruz-Faria,986417977,Rua de Neto 65 6693-436 Leiria,ortopedia
+768633349,Júlia Moura,993386729,Av Manuel Figueiredo S/N 6772-585 Caniço,cardiologia
+227123857,Wilson Barbosa,962129479,Praça da Bouça 49 6104-530 Faro,dermatologia
+267286257,Júlia Nogueira,911182256,Praça Brian Pinto 80 0956-262 Barreiro,cirugia cardio-toráxica
+029214765,Vicente Gaspar-Morais,989302675,Travessa Rafaela Coelho 973 0976-815 Tavira,otorrinolaringologia
+598783549,Irina Nascimento,965046894,Largo de Machado 89 3223-412 Santa Maria da Feira,ortopedia
+791357335,Caetana Vicente-Machado,963960191,Largo Edgar Cardoso S/N 5949-137 Ovar,cardiologia
+399269583,Daniel Nogueira,968009440,Rua Cardoso S/N 6056-978 Aveiro,dermatologia
+611224132,Nuno do Jesus,993057632,Praça do Recanto 59 3703-985 Espinho,cirugia cardio-toráxica
+124306894,Valentina Almeida,934955754,Avenida Luís Ferreira 5 7645-280 Seia,otorrinolaringologia
+897217773,Constança Pinto,982397768,Alameda das Musas 5 5604-576 Lamego,ortopedia
+271968499,Artur Alves,927262875,Travessa de Sá S/N 5660-503 Entroncamento,cardiologia
+676929136,Inês Barbosa,952746856,Av Anjos 31 9669-628 Vila Nova de Famalicão,dermatologia
+796019745,Manuel Moreira,920793110,Rua Maia 972 1412-313 Rio Tinto,cirugia cardio-toráxica
+443160511,Nelson Amaral,973463284,Avenida Duarte Barros 663 2907-973 Vila do Conde,otorrinolaringologia
+909643615,Raquel Monteiro-Lopes,901086764,Travessa do Conselho da Europa 60 6925-169 Oliveira do Hospital,ortopedia
+168362937,Simão Brito,953397086,Largo Vicente Cruz 23 1965-237 Alcobaça,cardiologia
+359927793,Simão Vieira,951743769,Av de Valente 81 4782-353 Vila Nova de Gaia,dermatologia
+580105039,Filipa-Caetana Morais,981392758,Praça do Preto S/N 3138-674 Espinho,cirugia cardio-toráxica
+318332849,Wilson Jesus,932618789,Praça Azevedo 94 1516-351 Viseu,otorrinolaringologia
+080552537,Nádia Pinto,920631783,Travessa dos Aliados S/N 3965-732 Marinha Grande,ortopedia
+261421328,Iara Loureiro,916458548,Largo Azevedo S/N 7750-749 Sintra,cardiologia
+033718990,Laura Amaral,949759692,Av Jesus 10 2407-841 Évora,dermatologia
+812412459,Gabriel Barros-Carvalho,967826547,Avenida de Faria S/N 7625-081 Amarante,cirugia cardio-toráxica
+127865640,Luciana do Cunha,988777356,Travessa de Teixeira 17 5028-963 Guimarães,otorrinolaringologia
+192676499,Rita Leite,928542788,Largo de Chaves de Oliveira 88 2692-187 Lagos,ortopedia
+094268960,Andreia Gaspar,916736482,Praça de Ribeiro 325 7863-237 Montijo,cardiologia
+373120846,Vitória de Domingues,951949485,R. Marques 6 2061-928 Estremoz,dermatologia
+701369222,Lucas Ribeiro,961795298,Alameda Mendes S/N 9815-571 Lamego,cirugia cardio-toráxica
+200793624,Rui Azevedo,904298407,Travessa de Tavares 19 4294-696 Guimarães,otorrinolaringologia
+890189580,Joaquim Brito,901246679,Rua do Adro 479 4433-115 Figueira da Foz,ortopedia
+033569818,Raquel Garcia,978109710,Avenida Rodrigues 37 9323-125 Ourém,cardiologia
+800289458,Flor Melo,943133788,Av Sousa 266 7068-994 Torres Novas,dermatologia
+029266292,Sara-Soraia Teixeira,918624775,Travessa de Ferreira 53 1122-350 Sabugal,cirugia cardio-toráxica
+957441819,António Macedo,973127864,Travessa de Maia 5 6972-307 Caniço,otorrinolaringologia

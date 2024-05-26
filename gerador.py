@@ -59,27 +59,32 @@ def gerar_nomes_unicos(n, provider):
     num = provider.name()
     nomes.add(num)
   return list(nomes)
+
+def gerar_nif_unicos(n, provider):
+  numeros = set()
+  while len(numeros) < n:
+    num = provider.telefone_9_digits()
+    numeros.add(num)
+  return list(numeros)
  
 
 nomes_clinicas = ["Gonzaga", "Cuf", "Joaquim Chaves", "Templimedis", "Almadense"]
 
 especialidades = ["ortopedia", "cardiologia", "dermatologia", "cirugia cardio-toráxica", "otorrinolaringologia"]
 
-lista_nif_medicos = gerar_numeros_ssn_unicos(60, fake)
+lista_nif_medicos = gerar_nif_unicos(60, fake)
 lista_ssn_pacientes = gerar_numeros_ssn_unicos(5000, fake)
 lista_sns_consulta = gerar_numeros_sns_unicos(len(days)*60*2,fake)
 
 with open('./data/paciente.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
-  writer.writerow(['ssn', 'nif', 'nome', 'telefone', 'morada', 'data_nasc'])
-  lista_nif = gerar_numeros_ssn_unicos(5000, fake)
+  lista_nif = gerar_nif_unicos(5000, fake)
   for i in range(5000):
     writer.writerow([lista_ssn_pacientes[i], lista_nif[i], fake.name(), fake.numerify("9########"), fake.address().replace(",", "").replace("\n", " "), fake.date_of_birth()])
 
 with open('./data/enfermeiro.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
-  writer.writerow(['nif', 'nome', 'telefone', 'morada', 'nome_clinica'])
-  lista_nif = gerar_numeros_ssn_unicos(25, fake)
+  lista_nif = gerar_nif_unicos(25, fake)
   lista_nomes = gerar_nomes_unicos(25, fake)
   for j in range(5):
     for i in range(5):
@@ -87,7 +92,6 @@ with open('./data/enfermeiro.csv', mode='w', newline='', encoding='utf-8') as fi
 
 with open('./data/medico.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
-  writer.writerow(['nif', 'nome', 'telefone', 'morada', 'especialidade'])
   lista_nomes = gerar_nomes_unicos(60, fake)
   for i in range(20):
     writer.writerow([lista_nif_medicos[i], lista_nomes[i], fake.numerify("9########"), fake.address().replace(",", "").replace("\n", " "), "clínica geral"])
@@ -97,7 +101,6 @@ with open('./data/medico.csv', mode='w', newline='', encoding='utf-8') as file:
 
 with open('./data/trabalha.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
-  writer.writerow(['nif', 'nome', 'dia_da_semana'])
   for i in range(60):
     for j in range(7):
       if j > 3:
@@ -111,7 +114,6 @@ horas = ['08:00:00', '08:30:00', '09:00:00', '09:30:00', '10:00:00', '10:30:00',
 
 with open('./data/consulta.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
-  writer.writerow(['id', 'ssn', 'nif','nome', 'data', 'hora', 'codigo_sns'])
   for i in range(len(days)):
     dow = dia_da_semana(days[i])
     for j in range(60):
@@ -121,7 +123,7 @@ with open('./data/consulta.csv', mode='w', newline='', encoding='utf-8') as file
         idx = j%5
       horas_consultas = random.sample(horas, 2)
       for k in range(2):
-        writer.writerow([i*120+j*2+k, lista_ssn_pacientes[(i*120+j*2+k)%5000], lista_nif_medicos[j], nomes_clinicas[idx], days[i], horas_consultas[k], lista_sns_consulta[i*120+j*2+k]])
+        writer.writerow([lista_ssn_pacientes[(i*120+j*2+k)%5000], lista_nif_medicos[j], nomes_clinicas[idx], days[i], horas_consultas[k], lista_sns_consulta[i*120+j*2+k]])
 
 
 quantidades = [1,2,3,4,5,6]
@@ -135,7 +137,7 @@ def selecionar_com_probabilidade(lista, probabilidade=0.8):
 
 
 lista_sns_consulta_com_receita = selecionar_com_probabilidade(lista_sns_consulta)
-lista_medicamentos = ["Paracetamol","Ibuprofeno","Amoxicilina","Azitromicina","metformina",
+lista_medicamentos = ["Paracetamol","Ibuprofeno","Amoxicilina","Azitromicina","Metformina",
                       "Omeprazol","Losartana","Simvastatina","CetirizinaLoratadina","Dipirona",
                       "Clonazepam","Diazepam","Hidroclorotiazida","Levotiroxina","Atenolol","Metoprolol",
                       "Prednisona","Furosemida","Amlodipino"]
@@ -143,11 +145,53 @@ lista_medicamentos = ["Paracetamol","Ibuprofeno","Amoxicilina","Azitromicina","m
 
 with open('./data/receita.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
-  writer.writerow(['código_sns', 'medicamento', 'quantidade'])
   for sns_consulta in lista_sns_consulta_com_receita:
     medicamentos = random.sample(lista_medicamentos, random.randint(1,6))
     for medicamento in medicamentos:
       writer.writerow([sns_consulta, medicamento, random.randint(1,3)])
-  
+
+
+lista_parametros_qualitativos = ['Cor da pele avermelhada','Hidratação da pele baixa','Presença de erupções cutâneas','Turgor da pele','Presença de cicatrizes','Cor anormal das mucosas','Presença de icterícia','Dor de cabeça','Dor de barriga','Aspecto dos olhos avermelhado','Presença de edema','Presença de linfonodos aumentados','Consistência baixa das massas palpáveis','Presença de exsudato','Aspecto do exsudato','Nível de consciência alerta','Orientação fraca','Estado emocional ansioso','Nível de ansiedade alto','Nível de depressão alto','Estado de agitação alto','Comportamento agressivo','Presença de tremores','Qualidade da dor ardente','Tosse seca','Cor da expectoração clara','Presença de dispnei','Tipo de respiração profunda','Poucas horas de sono','Apetite ausente','Presença de náusea','Presença de vômito','Consistência das fezes mole','Cor das fezes amarelada','Odor das fezes intenso','Frequência urinária pouco usual','Cor da urina escura','Odor da urina intenso','Presença de dor ao urinar','Presença de secreção vagina','Presença de dor pélvica','Frequencia da menstruação aleatório','Presença de cefaleia','Qualidade da cefaleia tensiva','Alterações na visão','Alterações na audição','Presença de vertigem','Presença de distensão abdominal','Falta de equilibrio','Qualidade da fala confusa']
+
+
+lista_parametros_quantitativos = [
+  'Pressão arterial',
+  'Frequência cardíaca',
+  'Temperatura corpora',
+  'Nível de glicose no sangue',
+  'Saturação de oxigénio',
+  'Índice de massa corpora',
+  'Nível de colesterol total',
+  'Taxa de filtração glomerular',
+  'Nível de creatinina no sangue',
+  'Taxa de respiração',
+  'Hemoglobina',
+  'Contagem de leucócitos',
+  'Contagem de plaquetas',
+  'Nível de potássio no sangue',
+  'Nível de sódio no sangue',
+  'Nível de cálcio no sangue',
+  'Nível de proteína C-reativ',
+  'Tempo de protrombina',
+  'Volume expiratório forçado no primeiro segundo',
+  'Escala de dor'
+]
+
+lista_valores = [[80,160], [60,140], [33, 41], [70,120],[70,100], [10,30],[160,200],[70,120],[0,2],[10,20],[10,20],[1,10],[200,300],[1,10],[100,200],[6,13],[0,2],[6,20],[2,6],[0,10]]
+
+
+with open('./data/observacao.csv', mode='w', newline='', encoding='utf-8') as file:
+  writer = csv.writer(file)
+  for idxConsulta in range(1, 1+len(lista_sns_consulta)):
+    possIdxs = list(range(0,20))
+    idx_param_quant = random.sample(possIdxs, random.randint(0,3))
+    sintoma_parametro_sem_valor = random.sample(lista_parametros_qualitativos, random.randint(1,5))
+
+    for sintoma_qual in sintoma_parametro_sem_valor:
+      writer.writerow([idxConsulta, sintoma_qual, None])
+    for idx in idx_param_quant:
+      writer.writerow([idxConsulta, lista_parametros_quantitativos[idx], round(random.uniform(lista_valores[idx][0], lista_valores[idx][1]), 2)])
+      
+
 
 
