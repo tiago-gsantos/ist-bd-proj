@@ -1,19 +1,62 @@
+#!/usr/bin/python3
+# Copyright (c) BDist Development Team
+# Distributed under the terms of the Modified BSD License.
 import os
+from logging.config import dictConfig
+
+from datetime import datetime, timezone, timedelta
 from flask import Flask, jsonify, request
-import psycopg
-from datetime import datetime
 from psycopg.rows import namedtuple_row
+from psycopg_pool import ConnectionPool
+import psycopg
+
+# Use the DATABASE_URL environment variable if it exists, otherwise use the default.
+# Use the format postgres://username:password@hostname/database_name to connect to the database.
+DATABASE_URL = os.environ.get("DATABASE_URL", "postgres://postgres:postgres@postgres/saude")
+
+pool = ConnectionPool(
+    conninfo=DATABASE_URL,
+    kwargs={
+        "autocommit": True,  # If True don’t start transactions automatically.
+        "row_factory": namedtuple_row,
+    },
+    min_size=4,
+    max_size=10,
+    open=True,
+    # check=ConnectionPool.check_connection,
+    name="postgres_pool",
+    timeout=5,
+)
+
+dictConfig(
+    {
+        "version": 1,
+        "formatters": {
+            "default": {
+                "format": "[%(asctime)s] %(levelname)s in %(module)s:%(lineno)s - %(funcName)20s(): %(message)s",
+            }
+        },
+        "handlers": {
+            "wsgi": {
+                "class": "logging.StreamHandler",
+                "stream": "ext://flask.logging.wsgi_errors_stream",
+                "formatter": "default",
+            }
+        },
+        "root": {"level": "INFO", "handlers": ["wsgi"]},
+    }
+)
 
 app = Flask(__name__)
-
-DATABASE_URL = os.environ.get("DATABASE_URL", "postgres://bank:bank@postgres/saude")
-#postgres://username:password@postgres(nome do docker)/dbname
+app.config.from_prefixed_env()
+log = app.logger
 
 @app.route("/", methods=("GET",))
 def listaClinicas():
-    #Lista todas as clinicas
-    with psycopg.connect(conninfo=DATABASE_URL) as conn:
-        with conn.cursor(row_factory=namedtuple_row) as cur:
+    """Lista todas as clinicas."""
+
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
             clinicas = cur.execute(
                 """
                 SELECT nome, morada
@@ -24,31 +67,32 @@ def listaClinicas():
 
     return jsonify(clinicas), 200
 
+
 @app.route("/c/<clinica>", methods=("GET",))
 def listaEspecialidadesClinica(clinica):
-    #Lista todas as especialidades de uma clinica
-    with psycopg.connect(conninfo=DATABASE_URL) as conn:
-        with conn.cursor(row_factory=namedtuple_row) as cur:
+    """Lista todas as especialidades de uma clinica."""
+
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
             especialidades = cur.execute(
                 """
                 SELECT DISTINCT medico.especialidade
-                FROM medico JOIN trabalha USING(nif) JOIN clinica USING(nome)
+                FROM clinica JOIN trabalha USING(nome) JOIN medico USING(nif)
                 WHERE clinica.nome=%(clinica)s;
                 """,
-                {"clinica":clinica},
+                {"clinica": clinica},
             ).fetchall()
 
-    return jsonify(especialidades), 204
+    return jsonify(especialidades), 200
 
 
 @app.route("/c/<clinica>/<especialidade>", methods=("GET",))
-def listaEspecialidadesClinica(clinica, especialidade):
+def listaMedicosSlots(clinica, especialidade):
     #Lista todas as especialidades de uma clinica
     dowMedicos = {}
     data_atual = datetime.now().date()
-    hora_atual = datetime.now().time() 
-    lista_horas_validas = ["8:00", "8:30","9:00","9:30","10:00","10:30","11:00","11:30","12:00","12:30"
-        , "13:00", "14:00","14:30","15:00","15:30","16:00","16:30","17:00","17:30","18:00","18:30","19:00"]
+    hora_atual = datetime.now(timezone.utc).astimezone(timezone(timedelta(hours=1))).time()
+    
     """
     dicionario da forma:  
         {
@@ -56,42 +100,214 @@ def listaEspecialidadesClinica(clinica, especialidade):
             (nomeMedico2, nifMedico2): [3,4,5]
         }
     """
-    with psycopg.connect(conninfo=DATABASE_URL) as conn:
-        with conn.cursor(row_factory=namedtuple_row) as cur:
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
             medico = cur.execute(
                 """
                 SELECT medico.nome AS nome, medico.nif AS nif, trabalha.dia_da_semana AS dow
                 FROM medico JOIN trabalha USING(nif)
-                WHERE clinica.nome=%(clinica)s AND medico.especialidade=%(especialidade)s;
+                WHERE trabalha.nome=%(clinica)s AND medico.especialidade=%(especialidade)s;
                 """,
                 {"clinica":clinica,"especialidade":especialidade},
             ).fetchone()
 
             while medico:
-                if (medico.nif,medico.nome) not in list(dowMedicos):
-                    dowMedicos[(medico.nif,medico.nome)] = [medico.dow]
+                if (medico.nome,medico.nif) not in list(dowMedicos):
+                    dowMedicos[(medico.nome,medico.nif)] = [medico.dow]
                 else:
-                    dowMedicos[(medico.nif, medico.nome)] = dowMedicos[(medico.nif, medico.nome)].extend([(medico.nif, medico.nome)])
+                    dowMedicos[(medico.nome, medico.nif)].append(medico.dow)
                 medico = cur.fetchone()
-
-
+                
+            consultasMedicos = []
             for dowMedico in list(dowMedicos):
+                
                 consultasMedico = cur.execute(
                     """
-                    SELECT data, hora
-                    FROM consultas
-                    WHERE clinica.nome=%(clinica)s AND medico.nome = nome AND (data > data_atual
-                    OR (data = data_atual AND hora > hora_atual));
+                    SELECT %(nome_medico)s, horas_disponiveis.data, horas_disponiveis.hora FROM 
+                        (SELECT dia AS data, hora
+                         FROM calendario
+                         WHERE (dia > %(data_atual)s
+                        OR (dia = %(data_atual)s AND hora > %(hora_atual)s))
+                        EXCEPT
+                        SELECT data, hora
+                        FROM consulta
+                        WHERE nome=%(clinica)s AND nif = %(nif_medico)s AND (data > %(data_atual)s
+                        OR (data = %(data_atual)s AND hora > %(hora_atual)s))) AS horas_disponiveis 
+                        ORDER BY horas_disponiveis.data, horas_disponiveis.hora ASC;
                     """,
-                    {"clinica":clinica, "nif_medico":dowMedico[0], "data_atual":data_atual, "hora_atual":hora_atual},
-                )
-                    
+                    {"clinica":clinica, "nif_medico":dowMedico[1], "data_atual":data_atual, "hora_atual":hora_atual, "nome_medico":dowMedico[0]},
+                ).fetchmany(3)
                 
-            
+                consultasMedicos.extend((dowMedico[0], row[1].isoformat(), row[2].strftime("%H:%M:%S")) for row in consultasMedico)
 
-    return jsonify(especialidades), 204
+    return jsonify(consultasMedicos), 200
 
+
+@app.route("/a/<clinica>/marcar", methods=("POST",))
+def marcaConsulta(clinica):
+    paciente=request.args.get("paciente")
+    medico=request.args.get("medico")
+    data=request.args.get("data")
+    hora=request.args.get("hora")
+
+    error = None
+
+    if existeMedico(medico) == False:
+        error = f'O médico {medico} não existe'  
+    elif existePaciente(paciente) == False:
+        error = f'O paciente {paciente} não existe'
+    elif verificaSlotMedico(medico, data, hora) == False:
+        error = f'O médico {medico} já tem uma consulta marcada para a data {data} e hora {hora}.'
+    elif verificaSlotPaciente(paciente, data, hora) == False:
+        error = 'Já tem uma consulta marcada para essa hora. Escolha uma hora em que não tenha consulta'
+
+    if error is not None:
+        return error, 400
+
+    try:
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO consulta (ssn, nif, nome, data, hora) VALUES(%(ssn)s, %(nif)s, %(clinica)s, %(data)s, %(hora)s)
+                    """,
+                    {"clinica": clinica, "nif": medico, "ssn": paciente, "data": data, "hora": hora},
+                )
+        
+        msg = f'A sua marcação foi cumprida. Será no dia {data} às {hora} na clínica {clinica} com o médico {medico}.\nObrigado pela confiança, boa consulta'
+        return msg, 200
+        
+    except psycopg.errors.RaiseException as e:
+        msg_error = f'Não foi possível marcar a sua consulta devido ao seguinte erro: {e}'
+        return msg_error, 400
+    except psycopg.IntegrityError as e:
+        msg_error = f'Não foi possível marcar a sua consulta devido ao seguinte erro: {e}'
+        return msg_error, 400
+
+def existeMedico(medico):
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            medico = cur.execute(
+                """
+                SELECT nif FROM medico WHERE nif=%(medico)s;
+                """,
+                {"medico":medico},
+            ).fetchone()
+        
+    return medico != None
+
+def existePaciente(paciente):
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            paciente = cur.execute(
+                """
+                SELECT ssn FROM paciente WHERE ssn=%(paciente)s;
+                """,
+                {"paciente":paciente},
+            ).fetchone()
+        
+    return paciente != None
+
+def verificaSlotMedico(medico, data, hora):
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            consulta = cur.execute(
+                """
+                SELECT nif FROM consulta WHERE nif=%(medico)s AND data=%(data)s AND hora=%(hora)s;
+                """,
+                {"medico":medico,"data":data,"hora":hora},
+            ).fetchone()
+        
+    return consulta == None
+
+def verificaSlotPaciente(paciente, data, hora):
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            consulta = cur.execute(
+                """
+                SELECT ssn FROM consulta WHERE ssn=%(paciente)s AND data=%(data)s AND hora=%(hora)s;
+                """,
+                {"paciente":paciente,"data":data,"hora":hora},
+            ).fetchone()
+        
+    return consulta == None
+
+
+@app.route("/a/<clinica>/cancelar", methods=("POST",))
+def cancelar_consulta(clinica):
+    paciente=request.args.get("paciente")
+    medico=request.args.get("medico")
+    data=request.args.get("data")
+    hora=request.args.get("hora")
+
+    error = None
+
+    if existeMedico(medico) == False:
+        error = f'O médico {medico} não existe'  
+    elif existePaciente(paciente) == False:
+        error = f'O paciente {paciente} não existe'
+    elif verificaExisteConsulta(medico, paciente, data, hora, clinica) == False:
+        error = f'Não há consultas marcadas para a data {data}, hora {hora} com o paciente {paciente}, o médico {medico} e na clinica {clinica}.'
+
+    if error is not None:
+        return error, 400
+
+    try:
+        with pool.connection() as conn:
+            with conn.cursor() as cur:
+                consulta=cur.execute(
+                    """
+                    SELECT id, codigo_sns FROM consulta WHERE ssn=%(paciente)s and nif=%(medico)s and data=%(data)s and hora=%(hora)s
+                    """,
+                    {"paciente":paciente, "medico":medico, "data":data, "hora":hora}
+                ).fetchone()
+                
+                cur.execute(
+                    """
+                    DELETE FROM observacao
+                    WHERE id = %(id)s
+                    """,
+                    {"id": consulta.id},
+                )
+                if consulta.codigo_sns != None:
+                    cur.execute(
+                        """
+                        DELETE FROM receita
+                        WHERE codigo_sns = %(codigo_sns)s 
+    
+                        """,
+                        {"codigo_sns": consulta.codigo_sns},
+                    )
+                cur.execute(
+                    """
+                    DELETE FROM consulta
+                    WHERE id = %(id)s 
+
+                    """,
+                    {"id": consulta.id},
+                )
+                
+            conn.commit()
+        
+        return f'A sua consulta foi desmarcada com sucesso. Obrigado, volte sempre!', 200
+        
+    except psycopg.IntegrityError as e:
+        msg_erro = f'Não foi possível desmarcar a sua consulta devido ao seguinte erro: {e}'
+        return msg_erro, 400
+
+
+def verificaExisteConsulta(medico, paciente, data, hora, clinica):
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            consulta = cur.execute(
+                """
+                SELECT ssn FROM consulta WHERE ssn=%(paciente)s AND nif=%(medico)s AND data=%(data)s AND hora=%(hora)s AND nome=%(clinica)s;
+                """,
+                {"medico":medico,"paciente":paciente,"data":data,"hora":hora, "clinica": clinica},
+            ).fetchone()
+        
+    return consulta != None
 
 
 if __name__ == "__main__":
-  app.run()
+    app.run()
