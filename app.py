@@ -10,8 +10,6 @@ from psycopg.rows import namedtuple_row
 from psycopg_pool import ConnectionPool
 import psycopg
 
-# Use the DATABASE_URL environment variable if it exists, otherwise use the default.
-# Use the format postgres://username:password@hostname/database_name to connect to the database.
 DATABASE_URL = os.environ.get("DATABASE_URL", "postgres://postgres:postgres@postgres/saude")
 
 pool = ConnectionPool(
