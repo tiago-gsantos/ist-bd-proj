@@ -68,5 +68,5 @@ CREATE TABLE observacao(
 	id INTEGER NOT NULL REFERENCES consulta,
 	parametro VARCHAR(155) NOT NULL,
 	valor FLOAT,
-    PRIMARY KEY (id, parametro)
+  PRIMARY KEY (id, parametro)
 );

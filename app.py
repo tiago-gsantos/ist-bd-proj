@@ -252,49 +252,46 @@ def cancelar_consulta(clinica):
     if error is not None:
         return error, 400
 
-    try:
-        with pool.connection() as conn:
-            with conn.cursor() as cur:
-                consulta=cur.execute(
-                    """
-                    SELECT id, codigo_sns FROM consulta WHERE ssn=%(paciente)s and nif=%(medico)s and data=%(data)s and hora=%(hora)s
-                    """,
-                    {"paciente":paciente, "medico":medico, "data":data, "hora":hora}
-                ).fetchone()
-                
-                cur.execute(
-                    """
-                    DELETE FROM observacao
-                    WHERE id = %(id)s
-                    """,
-                    {"id": consulta.id},
-                )
-                if consulta.codigo_sns != None:
-                    cur.execute(
-                        """
-                        DELETE FROM receita
-                        WHERE codigo_sns = %(codigo_sns)s 
-    
-                        """,
-                        {"codigo_sns": consulta.codigo_sns},
-                    )
-                cur.execute(
-                    """
-                    DELETE FROM consulta
-                    WHERE id = %(id)s 
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            try:
+                with conn.transaction():
+                        consulta=cur.execute(
+                            """
+                            SELECT id, codigo_sns FROM consulta WHERE ssn=%(paciente)s and nif=%(medico)s and data=%(data)s and hora=%(hora)s
+                            """,
+                            {"paciente":paciente, "medico":medico, "data":data, "hora":hora}
+                        ).fetchone()
 
-                    """,
-                    {"id": consulta.id},
-                )
+                        cur.execute(
+                            """
+                            DELETE FROM observacao
+                            WHERE id = %(id)s
+                            """,
+                            {"id": consulta.id},
+                        )
+                        if consulta.codigo_sns != None:
+                            cur.execute(
+                                """
+                                DELETE FROM receita
+                                WHERE codigo_sns = %(codigo_sns)s 
+            
+                                """,
+                                {"codigo_sns": consulta.codigo_sns},
+                            )
+                        cur.execute(
+                            """
+                            DELETE FROM consulta
+                            WHERE id = %(id)s 
+                            """,
+                            {"id": consulta.id},
+                        )
+            except psycopg.IntegrityError as e:
+                msg_erro = f'Não foi possível desmarcar a sua consulta devido ao seguinte erro: {e}'
+                return msg_erro, 400
                 
-            conn.commit()
+    return f'A sua consulta foi desmarcada com sucesso. Obrigado, volte sempre!', 200
         
-        return f'A sua consulta foi desmarcada com sucesso. Obrigado, volte sempre!', 200
-        
-    except psycopg.IntegrityError as e:
-        msg_erro = f'Não foi possível desmarcar a sua consulta devido ao seguinte erro: {e}'
-        return msg_erro, 400
-
 
 def verificaExisteConsulta(medico, paciente, data, hora, clinica):
     with pool.connection() as conn:
