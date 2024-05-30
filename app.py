@@ -232,7 +232,7 @@ def verificaSlotPaciente(paciente, data, hora):
 
 
 @app.route("/a/<clinica>/cancelar", methods=("POST",))
-def cancelar_consulta(clinica):
+def cancelarConsulta(clinica):
     paciente=request.args.get("paciente")
     medico=request.args.get("medico")
     data=request.args.get("data")
