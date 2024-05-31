@@ -160,7 +160,7 @@ def marcaConsulta(clinica):
         error = 'Já tem uma consulta marcada para essa hora. Escolha uma hora em que não tenha consulta'
 
     if error is not None:
-        return error, 400
+        return jsonify(error), 400
 
     try:
         with pool.connection() as conn:
@@ -173,14 +173,20 @@ def marcaConsulta(clinica):
                 )
         
         msg = f'A sua marcação foi cumprida. Será no dia {data} às {hora} na clínica {clinica} com o médico {medico}.\nObrigado pela confiança, boa consulta'
-        return msg, 200
+        return jsonify(msg), 200
         
     except psycopg.errors.RaiseException as e:
         msg_error = f'Não foi possível marcar a sua consulta devido ao seguinte erro: {e}'
         return msg_error, 400
     except psycopg.IntegrityError as e:
-        msg_error = f'Não foi possível marcar a sua consulta devido ao seguinte erro: {e}'
-        return msg_error, 400
+        if restricaoTempo in e:
+            erro = 'As consultas têm de ser à hora exata ou a uma meia hora e a hora do incio da consulta tem de ser entre as 8 e o 12:30 ou as 14 e as 18:30. Por favor, mude a hora para marcar a sua consulta.'
+        elif verifica_auto_consulta_trigger in e:
+            erro = 'Um médico não se pode consultar a si próprio. Por favor, selecione outro medico ou paciente.'
+        elif check_correct_clinic_trigger in e:
+            erro = 'O médico não trablha nessa consulta nesse dia da semana. Por favor, selecione outra clinica ou outro médico.'
+        msg_error = f'Não foi possível marcar a sua consulta devido ao seguinte erro: {erro}'
+        return jsonify(msg_error), 400
 
 def existeMedico(medico):
     with pool.connection() as conn:
@@ -248,7 +254,7 @@ def cancelar_consulta(clinica):
         error = f'Não há consultas marcadas para a data {data}, hora {hora} com o paciente {paciente}, o médico {medico} e na clinica {clinica}.'
 
     if error is not None:
-        return error, 400
+        return jsonify(error), 400
 
     with pool.connection() as conn:
         with conn.cursor() as cur:
@@ -286,9 +292,9 @@ def cancelar_consulta(clinica):
                         )
             except psycopg.IntegrityError as e:
                 msg_erro = f'Não foi possível desmarcar a sua consulta devido ao seguinte erro: {e}'
-                return msg_erro, 400
+                return jsonify(msg_erro), 400
                 
-    return f'A sua consulta foi desmarcada com sucesso. Obrigado, volte sempre!', 200
+    return jsonify(f'A sua consulta foi desmarcada com sucesso. Obrigado, volte sempre!'), 200
         
 
 def verificaExisteConsulta(medico, paciente, data, hora, clinica):
