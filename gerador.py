@@ -4,14 +4,14 @@ import random
 from faker.providers import BaseProvider
 from datetime import datetime, timedelta
 
-def generate_days_of_year(year):
+def generate_days_of_year(year,month, day):
     start_date = datetime(year, 1, 1)
-    end_date = datetime(year + 1, 1, 1)
+    end_date = datetime(year, month, day)
     
     current_date = start_date
     date_list = []
     
-    while current_date < end_date:
+    while current_date <= end_date:
         date_list.append(current_date.strftime('%Y-%m-%d'))
         current_date += timedelta(days=1)
     
@@ -23,7 +23,7 @@ def dia_da_semana(data_str):
     dia_semana = (dia_semana + 1) % 7
     return dia_semana
 
-days = generate_days_of_year(2023) + generate_days_of_year(2024)
+days = generate_days_of_year(2023,12,31) + generate_days_of_year(2024,5,31)
 
 fake = Faker('pt_PT')
 
