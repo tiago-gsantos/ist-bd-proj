@@ -270,7 +270,7 @@ def cancelarConsulta(clinica):
     elif existePaciente(paciente) == False:
         error = f'O paciente {paciente} não existe'
     elif horaFutura(data,hora) == False:
-        error = f'Horário de marcação inválido.'
+        error = f'Horário de desmarcação inválido.'
     elif verificaExisteConsulta(medico, paciente, data, hora, clinica) == False:
         error = f'Não há consultas marcadas para a data {data}, hora {hora} com o paciente {paciente}, o médico {medico} e na clinica {clinica}.'
 
