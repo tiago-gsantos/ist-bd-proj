@@ -74,7 +74,8 @@ especialidades = ["ortopedia", "cardiologia", "dermatologia", "cirugia cardio-to
 
 lista_nif_medicos = gerar_nif_unicos(60, fake)
 lista_ssn_pacientes = gerar_numeros_ssn_unicos(5000, fake)
-lista_sns_consulta = gerar_numeros_sns_unicos(len(days)*60*2,fake)
+num_consultas = len(days)*60*2
+lista_sns_consulta = gerar_numeros_sns_unicos(num_consultas*0.80,fake)
 
 with open('./data/paciente.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
@@ -123,20 +124,14 @@ with open('./data/consulta.csv', mode='w', newline='', encoding='utf-8') as file
         idx = j%5
       horas_consultas = random.sample(horas, 2)
       for k in range(2):
-        writer.writerow([lista_ssn_pacientes[(i*120+j*2+k)%5000], lista_nif_medicos[j], nomes_clinicas[idx], days[i], horas_consultas[k], lista_sns_consulta[i*120+j*2+k]])
-
+        if i*120+j*2+k < len(lista_sns_consulta):
+          writer.writerow([lista_ssn_pacientes[(i*120+j*2+k)%5000], lista_nif_medicos[j], nomes_clinicas[idx], days[i], horas_consultas[k], lista_sns_consulta[i*120+j*2+k]])
+        else:
+          writer.writerow([lista_ssn_pacientes[(i*120+j*2+k)%5000], lista_nif_medicos[j], nomes_clinicas[idx], days[i], horas_consultas[k], None])
+        
 
 quantidades = [1,2,3,4,5,6]
 
-def selecionar_com_probabilidade(lista, probabilidade=0.8):
-    resultado = []
-    for valor in lista:
-        if random.random() < probabilidade:
-            resultado.append(valor)
-    return resultado
-
-
-lista_sns_consulta_com_receita = selecionar_com_probabilidade(lista_sns_consulta)
 lista_medicamentos = ["Paracetamol","Ibuprofeno","Amoxicilina","Azitromicina","Metformina",
                       "Omeprazol","Losartana","Simvastatina","CetirizinaLoratadina","Dipirona",
                       "Clonazepam","Diazepam","Hidroclorotiazida","Levotiroxina","Atenolol","Metoprolol",
@@ -145,7 +140,7 @@ lista_medicamentos = ["Paracetamol","Ibuprofeno","Amoxicilina","Azitromicina","M
 
 with open('./data/receita.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
-  for sns_consulta in lista_sns_consulta_com_receita:
+  for sns_consulta in lista_sns_consulta:
     medicamentos = random.sample(lista_medicamentos, random.randint(1,6))
     for medicamento in medicamentos:
       writer.writerow([sns_consulta, medicamento, random.randint(1,3)])
@@ -182,7 +177,7 @@ lista_valores = [[80,160], [60,140], [33, 41], [70,120],[70,100], [10,30],[160,2
 
 with open('./data/observacao.csv', mode='w', newline='', encoding='utf-8') as file:
   writer = csv.writer(file)
-  for idxConsulta in range(1, 1+len(lista_sns_consulta)):
+  for idxConsulta in range(1, 1+num_consultas):
     possIdxs = list(range(0,20))
     idx_param_quant = random.sample(possIdxs, random.randint(0,3))
     sintoma_parametro_sem_valor = random.sample(lista_parametros_qualitativos, random.randint(1,5))
