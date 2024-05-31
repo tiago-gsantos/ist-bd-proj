@@ -154,6 +154,8 @@ def marcaConsulta(clinica):
         error = f'O médico {medico} não existe'  
     elif existePaciente(paciente) == False:
         error = f'O paciente {paciente} não existe'
+    elif horaFutura(data,hora) == False:
+        error = f'Horário de marcação inválido.'
     elif verificaSlotMedico(medico, data, hora) == False:
         error = f'O médico {medico} já tem uma consulta marcada para a data {data} e hora {hora}.'
     elif verificaSlotPaciente(paciente, data, hora) == False:
@@ -179,11 +181,11 @@ def marcaConsulta(clinica):
         msg_error = f'Não foi possível marcar a sua consulta devido ao seguinte erro: {e}'
         return msg_error, 400
     except psycopg.IntegrityError as e:
-        if restricaoTempo in e:
+        if 'restricaoTempo' in e:
             erro = 'As consultas têm de ser à hora exata ou a uma meia hora e a hora do incio da consulta tem de ser entre as 8 e o 12:30 ou as 14 e as 18:30. Por favor, mude a hora para marcar a sua consulta.'
-        elif verifica_auto_consulta_trigger in e:
+        elif 'verifica_auto_consulta_trigger' in e:
             erro = 'Um médico não se pode consultar a si próprio. Por favor, selecione outro medico ou paciente.'
-        elif check_correct_clinic_trigger in e:
+        elif 'check_correct_clinic_trigger' in e:
             erro = 'O médico não trablha nessa consulta nesse dia da semana. Por favor, selecione outra clinica ou outro médico.'
         msg_error = f'Não foi possível marcar a sua consulta devido ao seguinte erro: {erro}'
         return jsonify(msg_error), 400
@@ -211,6 +213,23 @@ def existePaciente(paciente):
             ).fetchone()
         
     return paciente != None
+
+def horaFutura(data_str, hora_str):
+    agora = datetime.now()
+
+    data_atual = agora.date()
+    hora_atual = agora.time()
+
+    data = datetime.strptime(data_str, "%Y-%m-%d").date()
+    hora = datetime.strptime(hora_str, "%H:%M").time()
+
+    if data < data_atual:
+        return False
+    else:
+        if data_atual == data and hora <= hora_atual:
+            return False
+        return True
+
 
 def verificaSlotMedico(medico, data, hora):
     with pool.connection() as conn:
@@ -250,6 +269,8 @@ def cancelarConsulta(clinica):
         error = f'O médico {medico} não existe'  
     elif existePaciente(paciente) == False:
         error = f'O paciente {paciente} não existe'
+    elif horaFutura(data,hora) == False:
+        error = f'Horário de marcação inválido.'
     elif verificaExisteConsulta(medico, paciente, data, hora, clinica) == False:
         error = f'Não há consultas marcadas para a data {data}, hora {hora} com o paciente {paciente}, o médico {medico} e na clinica {clinica}.'
 
